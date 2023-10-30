@@ -8,9 +8,9 @@ namespace BookingSystem.IServices
 
         public Task<Packages> GetCreditsByCountryid(int countryid, int pid);
 
-        public Task<user_package> BuyPackages(user_package user_Package);
+        public Task<UserPackage> BuyPackages(UserPackage user_Package);
 
-        public Task<List<user_package>> GetPurchasedPackages(int userid);
+        public Task<List<UserPackage>> GetPurchasedPackages(int userid);
 
 
     }

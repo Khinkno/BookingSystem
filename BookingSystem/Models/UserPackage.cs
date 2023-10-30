@@ -2,7 +2,7 @@
 
 namespace BookingSystem.Models
 {
-    public class user_package
+    public class UserPackage
     {
         [ConcurrencyCheck]
         [Key]

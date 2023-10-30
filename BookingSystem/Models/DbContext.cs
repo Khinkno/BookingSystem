@@ -13,7 +13,7 @@ namespace BookingSystem.Models
 
         public DbSet<Packages> packages { get; set; }
 
-        public DbSet<user_package> user_package { get; set; }
+        public DbSet<UserPackage> UserPackage { get; set; }
 
         public DbSet<ClassSchedule> classSchedule { get; set; }
 
@@ -30,9 +30,9 @@ namespace BookingSystem.Models
             modelBuilder.Entity<Packages>()
             .Property(a => a.pid).IsConcurrencyToken();
             modelBuilder.Entity<Packages>().ToTable("packages");
-            modelBuilder.Entity<user_package>()
+            modelBuilder.Entity<UserPackage>()
             .Property(a => a.user_pid).IsConcurrencyToken();
-            modelBuilder.Entity<user_package>().ToTable("user_package");
+            modelBuilder.Entity<UserPackage>().ToTable("user_package");
             modelBuilder.Entity<ClassSchedule>()
             .Property(a => a.classid).IsConcurrencyToken();
             modelBuilder.Entity<ClassSchedule>().ToTable("class");

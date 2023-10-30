@@ -46,9 +46,8 @@ namespace BookingSystem.Controllers
         public async Task<ActionResult> BuyPackages([FromBody] user_packageDTO user_PackageDTO)
         {
 
-            user_package user_package = _mapper.Map<user_package>(user_PackageDTO);
+            UserPackage user_package = _mapper.Map<UserPackage>(user_PackageDTO);
             Packages result = await _pkgService.GetCreditsByCountryid(UserController.countryid, user_package.pid);
-           // var result = await _cmsService.GetEVoucherById(couponDTO.Id);
             user_package.available_credits = result.no_of_credits;
            // user_package.available_credits
             if (result == null)

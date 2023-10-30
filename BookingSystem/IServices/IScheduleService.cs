@@ -4,8 +4,9 @@ namespace BookingSystem.IServices
 {
     public interface IScheduleService
     {
-        public Task<booking> Booking(booking booking);
+        public Task<string> CreateBooking(booking booking);
 
+        public Task<List<ClassSchedule>> GetclassSchedule(int countryid);
         public Task<booking> CancelBooking(booking booking);
     }
 }

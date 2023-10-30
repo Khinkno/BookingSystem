@@ -31,20 +31,29 @@ namespace BookingSystem.Controllers
             _distributedCache = distributedCache;
         }
 
+        [Route("GetClassSchedule")]
+        [HttpGet]
+        public async Task<ActionResult> GetClassSchedule()
+        {
+            //UserInfo user;
+            int countryid = UserController.countryid;
+            return Ok(await _scheduleService.GetclassSchedule(countryid));
 
+        }
 
         [Route("Booking")]
         [HttpPost]
-        public async Task<ActionResult> Booking([FromBody] BookingDTO bookingDTO)
+        public async Task<string> Booking([FromBody] BookingDTO bookingDTO)
         {
-            
+
             booking booking = _mapper.Map<booking>(bookingDTO);
-            //return Ok(await _scheduleService.Booking(booking));
-            var result = await _scheduleService.Booking(booking);
-            if (result == null)
-                return NotFound("Not Enough Credits");
-            else
-                return Ok(await _scheduleService.Booking(booking));
+            string result = await _scheduleService.CreateBooking(booking);
+            return result;
+            //if (result == null)
+            //    return NotFound("Not Enough Credits");
+            //else
+            //    return Ok(await _scheduleService.CreateBooking(booking));
+
 
         }
         [Route("CancelBooking")]

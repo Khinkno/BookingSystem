@@ -16,7 +16,7 @@ namespace BookingSystem.Controllers
         private readonly ITokenService _tokenService;
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
-        public static int countryid = 2;
+        public static int countryid = 1;
         //public UserController(IConfiguration configuration, ITokenService tokenService)
         //{
         //    _configuration = configuration;

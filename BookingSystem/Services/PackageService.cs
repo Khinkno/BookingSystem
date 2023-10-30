@@ -19,28 +19,28 @@ namespace BookingSystem.Services
         {
             if (countryid != 0)
             {
-                return await _context.packages.AsNoTracking().Where(x => x.countryid == countryid).ToListAsync();
+                return await _context.packages.AsNoTracking().Where(x => x.countryid == countryid && x.expired_date >= DateTime.Now).ToListAsync();
             }
             else
             {
-                return await _context.packages.AsNoTracking().ToListAsync();
+                return null;
             }
         }
 
-        public async Task<user_package> BuyPackages(user_package user_package)
+        public async Task<UserPackage> BuyPackages(UserPackage user_package)
         {
             if (AddPaymentCard(user_package.payment))
             {
-                var data = await _context.user_package.FirstOrDefaultAsync();
+                var data = await _context.UserPackage.FirstOrDefaultAsync();
                 if (data == null)
                 {
                     user_package.user_pid = 1;
                 }
                 else
                 {
-                    user_package.user_pid = _context.user_package.Max(x => x.user_pid) + 1;
+                    user_package.user_pid = _context.UserPackage.Max(x => x.user_pid) + 1;
                 }
-                await _context.user_package.AddAsync(user_package);
+                await _context.UserPackage.AddAsync(user_package);
                 await _context.SaveChangesAsync();
 
             }
@@ -53,11 +53,11 @@ namespace BookingSystem.Services
             return result;
         }
 
-        public async Task<List<user_package>> GetPurchasedPackages(int userid)
+        public async Task<List<UserPackage>> GetPurchasedPackages(int userid)
         {
             if (userid != 0)
             {
-                return await _context.user_package.AsNoTracking().Where(x => x.userid == userid).ToListAsync();
+                return await _context.UserPackage.AsNoTracking().Where(x => x.userid == userid).ToListAsync();
             }
             else
             {
