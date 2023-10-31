@@ -7,6 +7,6 @@ namespace BookingSystem.IServices
         public Task<string> CreateBooking(booking booking);
 
         public Task<List<ClassSchedule>> GetclassSchedule(int countryid);
-        public Task<booking> CancelBooking(booking booking);
+        public Task<string> CancelBooking(booking booking);
     }
 }

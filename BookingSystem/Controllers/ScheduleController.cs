@@ -58,10 +58,11 @@ namespace BookingSystem.Controllers
         }
         [Route("CancelBooking")]
         [HttpPost]
-        public async Task<ActionResult> CancelBooking([FromBody] BookingDTO bookingDTO)
+        public async Task<string> CancelBooking([FromBody] BookingDTO bookingDTO)
         {
             booking booking = _mapper.Map<booking>(bookingDTO);
-            return Ok(await _scheduleService.CancelBooking(booking));
+            string result = await _scheduleService.CancelBooking(booking);
+            return result;
 
 
         }

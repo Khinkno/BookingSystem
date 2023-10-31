@@ -41,8 +41,6 @@ namespace BookingSystem.Services
             if (available_credits >= credit)
             {
 
-
-
                 int occupiedSlots = int.Parse(_distributedCache.GetString("OccupiedSlots" + result.classid) ?? "0");
                 int occupiedWaitListSlots = int.Parse(_distributedCache.GetString("OccupiedWaitListSlots" + result.classid) ?? "0");
                 if (result.available_slots >= occupiedSlots)
@@ -105,7 +103,7 @@ namespace BookingSystem.Services
                 return "Failed";
             }
         }
-        public async Task<booking> CancelBooking(booking booking)
+        public async Task<string> CancelBooking(booking booking)
         {
             UserPackage credits = await _context.UserPackage.AsNoTracking().FirstOrDefaultAsync(x => x.user_pid == booking.user_pid);
             int available_credits = credits.available_credits;
@@ -119,11 +117,16 @@ namespace BookingSystem.Services
             _context.UserPackage.Update(user_Package);
             await _context.SaveChangesAsync();
 
-            booking booking1 = await _context.booking.AsNoTracking().FirstOrDefaultAsync(x => x.user_pid == booking.user_pid);
-            booking1.status = "Cancel";
-            _context.booking.Update(booking1);
+            booking cancelbooking = await _context.booking.AsNoTracking().FirstOrDefaultAsync(x => x.user_pid == booking.user_pid);
+            cancelbooking.status = "Cancel";
+            _context.booking.Update(cancelbooking);
             await _context.SaveChangesAsync();
-            return booking;
+
+            booking waitlistbooking = await _context.booking.AsNoTracking().FirstOrDefaultAsync(x => x.status == "WaitList");
+            waitlistbooking.status = "Booked";
+            _context.booking.Update(waitlistbooking);
+            await _context.SaveChangesAsync();
+            return "Successful";
 
         }
 
