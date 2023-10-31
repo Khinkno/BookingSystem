@@ -2,6 +2,7 @@
 using BookingSystem.DTO;
 using BookingSystem.IServices;
 using BookingSystem.Models;
+using BookingSystem.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -63,6 +64,25 @@ namespace BookingSystem.Controllers
                 countryid = result.countryid;
                 return new JsonResult(new { userName = email, token = _tokenService.CreateToken(email) });
             }
+        }
+
+        [Route("GetProfile")]
+        [HttpGet]
+        public async Task<ActionResult> GetProfile(int userid)
+        {
+            
+            return Ok(await _userService.GetProfile(userid));
+
+        }
+        [Route("ResetPassword")]
+        [HttpPost]
+        public async Task<string> ResetPassword(int userid,string oldpassword,string newpassword)
+        {
+
+          //  UserInfo user = _mapper.Map<UserInfo>(userDTO);
+            string result= await _userService.ResetPassword(userid,oldpassword,newpassword);
+            return result;
+
         }
     }
 }

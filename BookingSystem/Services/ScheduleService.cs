@@ -43,7 +43,7 @@ namespace BookingSystem.Services
 
                 int occupiedSlots = int.Parse(_distributedCache.GetString("OccupiedSlots" + result.classid) ?? "0");
                 int occupiedWaitListSlots = int.Parse(_distributedCache.GetString("OccupiedWaitListSlots" + result.classid) ?? "0");
-                if (result.available_slots >= occupiedSlots)
+                if (result.available_slots > occupiedSlots)
                 {
                     UserPackage userPackage = await _context.UserPackage.AsNoTracking().FirstOrDefaultAsync(x => x.user_pid == booking.user_pid && x.isexpired == false);
                     userPackage.used_credits = credit;
@@ -68,7 +68,7 @@ namespace BookingSystem.Services
                     return "Successful";
 
                 }
-                else if (result.waitlist_slots >= occupiedWaitListSlots)
+                else if (result.waitlist_slots > occupiedWaitListSlots)
                 {
                     UserPackage userPackage = await _context.UserPackage.AsNoTracking().FirstOrDefaultAsync(x => x.user_pid == booking.user_pid && x.isexpired == false);
                     userPackage.used_credits = credit;
@@ -92,7 +92,8 @@ namespace BookingSystem.Services
                     await _context.SaveChangesAsync();
                     return "Successful ";
 
-                }else
+                }
+                else
                 {
                     return "Failed";
                 }

@@ -14,7 +14,7 @@ namespace BookingSystem.Services
             _context = context;
         }
 
-     
+
         public async Task<UserInfo> RegisterUser(UserInfo user)
         {
             if (SendVerifyEmail(user.email))
@@ -30,7 +30,7 @@ namespace BookingSystem.Services
                 }
                 await _context.user.AddAsync(user);
                 await _context.SaveChangesAsync();
-                
+
             }
             return user;
         }
@@ -40,10 +40,36 @@ namespace BookingSystem.Services
             return true;
         }
 
-        public async Task<UserInfo> GetUserLogin(string email,string password)
+        public async Task<UserInfo> GetUserLogin(string email, string password)
         {
-            UserInfo result = await _context.user.AsNoTracking().FirstOrDefaultAsync(predicate: x => x.email == email && x.password==password);
+            UserInfo result = await _context.user.AsNoTracking().FirstOrDefaultAsync(predicate: x => x.email == email && x.password == password);
             return result;
         }
+
+        public async Task<List<UserInfo>> GetProfile(int userid)
+        {
+            if (userid != 0)
+            {
+                return await _context.user.AsNoTracking().Where(x => x.userid == userid).ToListAsync();
+            }
+            else
+            {
+                return null;
+            }
+        }
+        public async Task<string> ResetPassword(int userid, string oldpassword, string newpassword)
+        {
+            UserInfo user = await _context.user.AsNoTracking().FirstOrDefaultAsync(x => x.userid == userid && x.password == oldpassword);
+            if (user.userid != null)
+            {
+                user.password = newpassword;
+                _context.user.Update(user);
+                await _context.SaveChangesAsync();
+                return "Successful";
+            }
+            else
+                return "Wrong Password";
+        }
+
     }
 }
