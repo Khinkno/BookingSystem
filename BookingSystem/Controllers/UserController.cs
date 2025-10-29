@@ -68,10 +68,10 @@ namespace BookingSystem.Controllers
 
         [Route("GetProfile")]
         [HttpGet]
-        public async Task<ActionResult> GetProfile(int userid)
+        public async Task<ActionResult> GetProfile(string username,string email)
         {
             
-            return Ok(await _userService.GetProfile(userid));
+            return Ok(await _userService.GetProfile(username, email));
 
         }
         [Route("ResetPassword")]

@@ -6,7 +6,8 @@ namespace BookingSystem.DTO
     {
       
         [Key]
-        public int pid { get; set; }
+
+       // public int pid { get; set; }
 
         public string name { get; set; }
 

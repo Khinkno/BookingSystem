@@ -20,14 +20,14 @@ namespace BookingSystem.Services
             if (SendVerifyEmail(user.email))
             {
                 var data = await _context.user.FirstOrDefaultAsync();
-                if (data == null)
-                {
-                    user.userid = 1;
-                }
-                else
-                {
-                    user.userid = _context.user.Max(x => x.userid) + 1;
-                }
+                //if (data == null)
+                //{
+                //    user.userid = 1;
+                //}
+                //else
+                //{
+                //    user.userid = _context.user.Max(x => x.userid) + 1;
+                //}
                 await _context.user.AddAsync(user);
                 await _context.SaveChangesAsync();
 
@@ -42,15 +42,15 @@ namespace BookingSystem.Services
 
         public async Task<UserInfo> GetUserLogin(string email, string password)
         {
-            UserInfo result = await _context.user.AsNoTracking().FirstOrDefaultAsync(predicate: x => x.email == email && x.password == password);
+            UserInfo result = await _context.user.AsNoTracking().FirstOrDefaultAsync(x => x.email == email && x.password == password);
             return result;
         }
 
-        public async Task<List<UserInfo>> GetProfile(int userid)
+        public async Task<List<UserInfo>> GetProfile(string username, string email)
         {
-            if (userid != 0)
+            if (username != "" && email != "")
             {
-                return await _context.user.AsNoTracking().Where(x => x.userid == userid).ToListAsync();
+                return await _context.user.AsNoTracking().Where(x => x.name == username && x.email == email).ToListAsync();
             }
             else
             {
