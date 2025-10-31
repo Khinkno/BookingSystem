@@ -2,10 +2,12 @@
 using BookingSystem.DTO;
 using BookingSystem.IServices;
 using BookingSystem.Models;
+using BookingSystem.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
+using System.Security.Claims;
 
 namespace BookingSystem.Controllers
 {
@@ -21,14 +23,15 @@ namespace BookingSystem.Controllers
         private readonly IMapper _mapper;
         private readonly IScheduleService _scheduleService;
         private IDistributedCache _distributedCache;
-
-        public ScheduleController(ILogger<PackageController> logger, IMapper mapper, IScheduleService scheduleService, IDistributedCache distributedCache)
+        private readonly IUserService _userService;
+        public ScheduleController(ILogger<PackageController> logger, IMapper mapper, IScheduleService scheduleService, IDistributedCache distributedCache,IUserService userService)
 
         {
             _logger = logger;
             _mapper = mapper;
             _scheduleService = scheduleService;
             _distributedCache = distributedCache;
+            _userService = userService;
         }
 
         [Route("GetClassSchedule")]
@@ -36,7 +39,9 @@ namespace BookingSystem.Controllers
         public async Task<ActionResult> GetClassSchedule()
         {
             //UserInfo user;
-            int countryid = UserController.countryid;
+            ClaimsPrincipal currentUser = this.User;
+            int userid = Convert.ToInt32(currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            int countryid = await _userService.GetCountryIdByUserid(userid);
             return Ok(await _scheduleService.GetclassSchedule(countryid));
 
         }

@@ -6,9 +6,18 @@ using BookingSystem.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
+using static BookingSystem.DTO.UserInfoDTO;
 
 namespace BookingSystem.Controllers
 {
+    //public enum Country
+    //{
+    //    SelectCountry = 0,
+    //    Myanmar = 1,
+    //    Singapore = 2
+    //}
     [Route("api/token")]
     [ApiController]
     public class UserController : ControllerBase
@@ -17,12 +26,8 @@ namespace BookingSystem.Controllers
         private readonly ITokenService _tokenService;
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
-        public static int countryid = 1;
-        //public UserController(IConfiguration configuration, ITokenService tokenService)
-        //{
-        //    _configuration = configuration;
-        //    _tokenService = tokenService;
-        //}
+
+  
 
         public UserController(IConfiguration configuration, ITokenService tokenService, IUserService userService, IMapper mapper)
         {
@@ -34,9 +39,21 @@ namespace BookingSystem.Controllers
 
         [Route("RegisterUser")]
         [HttpPost]
-        public async Task<ActionResult> RegisterUser([FromBody] UserInfoDTO userDTO)
+        //public async Task<ActionResult> RegisterUser([FromBody] UserInfoDTO userDTO)
+        public async Task<ActionResult> RegisterUser([Required]string name, [Required] string email, [Required] string phno, [Required] Country countryid, [Required][DataType(DataType.Password)] string password)
         {
+            //string hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.password);
 
+            //// 2. **Store the Hash:** Replace the plain text password with the hash.
+            //user.password = hashedPassword;
+            UserInfoDTO userDTO = new UserInfoDTO
+            {
+                name = name,
+                email = email,
+                phno = phno,
+                countryid = countryid,
+                password = password
+            };
             UserInfo user = _mapper.Map<UserInfo>(userDTO);
             return Ok(await _userService.RegisterUser(user));
 
@@ -45,7 +62,7 @@ namespace BookingSystem.Controllers
 
 
         [HttpPost("login")]
-        public async Task<ActionResult> Login(string email, string password)
+        public async Task<ActionResult> Login(string email, [DataType(DataType.Password)] string password)
         {
             //if (email != "admin@gmail.com" && password != "123")
             //    return Unauthorized("Invalid Credentials");
@@ -61,27 +78,42 @@ namespace BookingSystem.Controllers
             else
             {
                 //UserInfo user = _mapper.Map<UserInfo>(UserInfoDTO);
-                countryid = result.countryid;
-                return new JsonResult(new { userName = email, token = _tokenService.CreateToken(email) });
+                return new JsonResult(new { userName = result.userid, token = _tokenService.CreateToken(result.userid) });
             }
         }
 
         [Route("GetProfile")]
         [HttpGet]
-        public async Task<ActionResult> GetProfile(string username,string email)
+        public async Task<ActionResult> GetProfile()
         {
-            
-            return Ok(await _userService.GetProfile(username, email));
+            ClaimsPrincipal currentUser = this.User;
+            int userid = Convert.ToInt32(currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            if (userid>0)
+            {
+                return Ok(await _userService.GetProfile(userid));
+            }
+            else
+            {
+                return Unauthorized("Please Login!");
+            }
 
         }
         [Route("ResetPassword")]
         [HttpPost]
-        public async Task<string> ResetPassword(int userid,string oldpassword,string newpassword)
+        public async Task<string> ResetPassword(string email, [DataType(DataType.Password)] string oldpassword, [DataType(DataType.Password)] string newpassword)
         {
 
-          //  UserInfo user = _mapper.Map<UserInfo>(userDTO);
-            string result= await _userService.ResetPassword(userid,oldpassword,newpassword);
-            return result;
+            ClaimsPrincipal currentUser = this.User;
+            int userid = Convert.ToInt32(currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            if (userid > 0)
+            {
+                string result = await _userService.ResetPassword(email, oldpassword, newpassword);
+                return result;
+            }
+            else
+            {
+                return "Please Login!";
+            }
 
         }
     }

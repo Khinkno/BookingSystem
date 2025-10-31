@@ -3,11 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BookingSystem.Models
 {
-    public enum Country
-    {
-        Myanmar =1,
-        Singapore=2
-    }
+   
     public class UserInfo
     {
         [ConcurrencyCheck]
@@ -21,8 +17,10 @@ namespace BookingSystem.Models
         [Required]
         public string phno { get; set; }
         [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "A valid country must be selected.")]
         public int countryid { get; set; }
+      
+        [DataType(DataType.Password)] // <-- ADD THIS ATTRIBUTE
+        [MinLength(8)]
         [Required]
         public String password { get; set; }
 

@@ -46,21 +46,15 @@ namespace BookingSystem.Services
             return result;
         }
 
-        public async Task<List<UserInfo>> GetProfile(string username, string email)
+        public async Task<List<UserInfo>> GetProfile(int userid)
         {
-            if (username != "" && email != "")
-            {
-                return await _context.user.AsNoTracking().Where(x => x.name == username && x.email == email).ToListAsync();
-            }
-            else
-            {
-                return null;
-            }
+            return await _context.user.AsNoTracking().Where(x => x.userid == userid).ToListAsync();
+
         }
-        public async Task<string> ResetPassword(int userid, string oldpassword, string newpassword)
+        public async Task<string> ResetPassword(string email, string oldpassword, string newpassword)
         {
-            UserInfo user = await _context.user.AsNoTracking().FirstOrDefaultAsync(x => x.userid == userid && x.password == oldpassword);
-            if (user.userid != null)
+            UserInfo user = await _context.user.AsNoTracking().FirstOrDefaultAsync(x => x.email == email && x.password == oldpassword);
+            if (user != null)
             {
                 user.password = newpassword;
                 _context.user.Update(user);
@@ -68,7 +62,15 @@ namespace BookingSystem.Services
                 return "Successful";
             }
             else
-                return "Wrong Password";
+                return "Wrong Password or Email";
+        }
+
+        public async Task<int> GetCountryIdByUserid(int userid)
+        {
+            UserInfo user = await _context.user.AsNoTracking().FirstOrDefaultAsync(x => x.userid == userid);
+
+            return user.countryid;
+
         }
 
     }

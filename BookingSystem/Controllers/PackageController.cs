@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BookingSystem.Controllers
 {
@@ -22,13 +23,14 @@ namespace BookingSystem.Controllers
         private readonly ILogger<PackageController> _logger;
         private readonly IMapper _mapper;
         private readonly IPackageService _pkgService;
-
-        public PackageController(ILogger<PackageController> logger, IMapper mapper, IPackageService pkgService)
+        private readonly IUserService _userService;
+        public PackageController(ILogger<PackageController> logger, IMapper mapper, IPackageService pkgService,IUserService userService)
 
         {
             _logger = logger;
             _mapper = mapper;
             _pkgService = pkgService;
+            _userService = userService;
         }
 
         [Route("GetPackages")]
@@ -36,7 +38,16 @@ namespace BookingSystem.Controllers
         public async Task<ActionResult> GetPackages()
         {
             //UserInfo user;
-            int countryid = UserController.countryid;
+            //ClaimsPrincipal currentUser = this.User;
+            //int userid = Convert.ToInt32(currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            ClaimsPrincipal currentUser = this.User;
+            string userIdString = currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+
+            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userid))
+            {
+                return Unauthorized("Authentication failed: User ID not found in token.");
+            }
+            int countryid = await _userService.GetCountryIdByUserid(Convert.ToInt16(userid));
             return Ok(await _pkgService.GetPackages(countryid));
 
         }
@@ -45,9 +56,11 @@ namespace BookingSystem.Controllers
         [HttpPost]
         public async Task<ActionResult> BuyPackages([FromBody] user_packageDTO user_PackageDTO)
         {
-
+            ClaimsPrincipal currentUser = this.User;
+            int userid = Convert.ToInt32(currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            int countryid = await _userService.GetCountryIdByUserid(userid);
             UserPackage user_package = _mapper.Map<UserPackage>(user_PackageDTO);
-            Packages result = await _pkgService.GetCreditsByCountryid(UserController.countryid, user_package.pid);
+            Packages result = await _pkgService.GetCreditsByCountryid(countryid, user_package.pid);
             user_package.available_credits = result.no_of_credits;
            // user_package.available_credits
             if (result == null)
@@ -63,11 +76,11 @@ namespace BookingSystem.Controllers
         }
         [Route("MyPackageLists")]
         [HttpGet]
-        public async Task<ActionResult> GetPurchasedPackages(int userid)
+        public async Task<ActionResult> GetPurchasedPackages()
         {
-            //UserInfo user;
-            
-            return Ok(await _pkgService.GetPurchasedPackages(userid));
+            ClaimsPrincipal currentUser = this.User;
+            string? userid = currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return Ok(await _pkgService.GetPurchasedPackages(Convert.ToInt32(userid)));
 
         }
 

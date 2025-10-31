@@ -1,4 +1,5 @@
 using System.Text;
+using BookingSystem;
 using BookingSystem.Controllers;
 using BookingSystem.IServices;
 using BookingSystem.Models;
@@ -64,6 +65,8 @@ builder.Services.AddScoped<IScheduleService, ScheduleService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
+    options.SchemaFilter<EnumSchemaFilter>();
+   // options.OperationFilter<PasswordFormat>();
     options.OrderActionsBy((apiDesc) =>
     {
         var controllerName = apiDesc.ActionDescriptor.RouteValues["controller"];

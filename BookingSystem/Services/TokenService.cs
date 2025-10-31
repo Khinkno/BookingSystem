@@ -13,11 +13,11 @@ namespace BookingSystem.Services
         {
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Token"]));
         }
-        public string CreateToken(string username)
+        public string CreateToken(int userid)
         {
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.NameId, username)
+                new Claim(JwtRegisteredClaimNames.NameId, userid.ToString())
             };
 
             //Creating credentials. Specifying which type of Security Algorithm we are using
