@@ -12,12 +12,7 @@ using static BookingSystem.DTO.UserInfoDTO;
 
 namespace BookingSystem.Controllers
 {
-    //public enum Country
-    //{
-    //    SelectCountry = 0,
-    //    Myanmar = 1,
-    //    Singapore = 2
-    //}
+  
     [Route("api/token")]
     [ApiController]
     public class UserController : ControllerBase
@@ -77,7 +72,6 @@ namespace BookingSystem.Controllers
             }
             else
             {
-                //UserInfo user = _mapper.Map<UserInfo>(UserInfoDTO);
                 return new JsonResult(new { userName = result.userid, token = _tokenService.CreateToken(result.userid) });
             }
         }

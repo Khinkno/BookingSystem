@@ -41,9 +41,5 @@ namespace BookingSystem.Models
             modelBuilder.Entity<booking>().ToTable("booking");
 
         }
-
-        //public DbSet<EVoucherSystem.Models.PurchaseEVoucherViewModel>? PurchaseEVoucherViewModel { get; set; }
-
-        //public DbSet<DTO.UserDTO>? userDTOs { get; set; }
     }
 }

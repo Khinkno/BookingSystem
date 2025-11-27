@@ -30,13 +30,35 @@ namespace BookingSystem.Services
 
         public async Task<string> CreateBooking(booking booking)
         {
+            UserPackage? credits = await _context.UserPackage
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.user_pid == booking.user_pid);
 
-            UserPackage credits = await _context.UserPackage.AsNoTracking().FirstOrDefaultAsync(x => x.user_pid == booking.user_pid);
-            int available_credits = credits.available_credits;
+            int available_credits = 0; // Initialize with a default/safe value
 
-            ClassSchedule result = await _context.classSchedule.AsNoTracking().FirstOrDefaultAsync(x => x.classid == booking.classid);
-            int credit = result.no_of_credits;
+            if (credits != null)
+            {
+                available_credits = credits.available_credits;
+            }
+            else
+            {
+                throw new InvalidOperationException($"User package not found for user_pid: {booking.user_pid}");
+            }
 
+            ClassSchedule? result = await _context.classSchedule
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.classid == booking.classid);
+
+            int credit = 0; // Initialize with a default/safe value
+
+            if (result != null)
+            {
+                credit = result.no_of_credits;
+            }
+            else
+            {
+                throw new InvalidOperationException($"Class schedule not found for classid: {booking.classid}");
+            }
 
             if (available_credits >= credit)
             {
@@ -52,14 +74,14 @@ namespace BookingSystem.Services
                     await _context.SaveChangesAsync();
 
                     var data = await _context.booking.FirstOrDefaultAsync();
-                    if (data == null)
-                    {
-                        booking.bookingid = 1;
-                    }
-                    else
-                    {
-                        booking.bookingid = _context.booking.Max(x => x.user_pid) + 1;
-                    }
+                    //if (data == null)
+                    //{
+                    //    booking.bookingid = 1;
+                    //}
+                    //else
+                    //{
+                    //    booking.bookingid = _context.booking.Max(x => x.user_pid) + 1;
+                    //}
 
                     _distributedCache.SetString("OccupiedSlots" + result.classid, occupiedSlots + 1 + "");
                     booking.status = "Booked";
@@ -77,14 +99,14 @@ namespace BookingSystem.Services
                     await _context.SaveChangesAsync();
 
                     var data = await _context.booking.FirstOrDefaultAsync();
-                    if (data == null)
-                    {
-                        booking.bookingid = 1;
-                    }
-                    else
-                    {
-                        booking.bookingid = _context.booking.Max(x => x.user_pid) + 1;
-                    }
+                    //if (data == null)
+                    //{
+                    //    booking.bookingid = 1;
+                    //}
+                    //else
+                    //{
+                    //    booking.bookingid = _context.booking.Max(x => x.user_pid) + 1;
+                    //}
 
                     _distributedCache.SetString("OccupiedWaitListSlots" + result.classid, occupiedWaitListSlots + 1 + "");
                     booking.status = "WaitList";

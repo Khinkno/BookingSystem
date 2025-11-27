@@ -24,7 +24,7 @@ namespace BookingSystem.DTO
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "A valid country must be selected.")]
         public Country countryid { get; set; }
-        [DataType(DataType.Password)] // <-- ADD THIS ATTRIBUTE
+        [DataType(DataType.Password)] 
         [MinLength(8)]
         [Required]
         public String password { get; set; }

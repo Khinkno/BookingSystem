@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BookingSystem.Models
 {
@@ -6,6 +7,7 @@ namespace BookingSystem.Models
     {
         [ConcurrencyCheck]
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int classid { get; set; }
 
         public string name { get; set; }

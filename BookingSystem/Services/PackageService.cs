@@ -32,14 +32,7 @@ namespace BookingSystem.Services
             if (AddPaymentCard(user_package.payment))
             {
                 var data = await _context.UserPackage.FirstOrDefaultAsync();
-                if (data == null)
-                {
-                    user_package.user_pid = 1;
-                }
-                else
-                {
-                    user_package.user_pid = _context.UserPackage.Max(x => x.user_pid) + 1;
-                }
+               
                 await _context.UserPackage.AddAsync(user_package);
                 await _context.SaveChangesAsync();
 

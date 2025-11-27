@@ -37,19 +37,25 @@ namespace BookingSystem.Controllers
         [HttpGet]
         public async Task<ActionResult> GetPackages()
         {
-            //UserInfo user;
-            //ClaimsPrincipal currentUser = this.User;
-            //int userid = Convert.ToInt32(currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            ClaimsPrincipal currentUser = this.User;
-            string userIdString = currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
-
-            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userid))
+            try
             {
-                return Unauthorized("Authentication failed: User ID not found in token.");
-            }
-            int countryid = await _userService.GetCountryIdByUserid(Convert.ToInt16(userid));
-            return Ok(await _pkgService.GetPackages(countryid));
+                //UserInfo user;
+                //ClaimsPrincipal currentUser = this.User;
+                //int userid = Convert.ToInt32(currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+                ClaimsPrincipal currentUser = this.User;
+                string userIdString = currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
 
+                if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userid))
+                {
+                    return Unauthorized("Authentication failed: User ID not found in token.");
+                }
+                int countryid = await _userService.GetCountryIdByUserid(Convert.ToInt16(userid));
+                return Ok(await _pkgService.GetPackages(countryid));
+            }
+            catch (Exception ex)
+            {
+            }
+            return Unauthorized("You can't buy this package!");
         }
 
         [Route("BuyPackages")]
