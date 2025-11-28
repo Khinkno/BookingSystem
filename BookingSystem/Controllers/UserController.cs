@@ -3,6 +3,7 @@ using BookingSystem.DTO;
 using BookingSystem.IServices;
 using BookingSystem.Models;
 using BookingSystem.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -12,7 +13,7 @@ using static BookingSystem.DTO.UserInfoDTO;
 
 namespace BookingSystem.Controllers
 {
-  
+
     [Route("api/token")]
     [ApiController]
     public class UserController : ControllerBase
@@ -22,7 +23,7 @@ namespace BookingSystem.Controllers
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
 
-  
+
 
         public UserController(IConfiguration configuration, ITokenService tokenService, IUserService userService, IMapper mapper)
         {
@@ -35,7 +36,7 @@ namespace BookingSystem.Controllers
         [Route("RegisterUser")]
         [HttpPost]
         //public async Task<ActionResult> RegisterUser([FromBody] UserInfoDTO userDTO)
-        public async Task<ActionResult> RegisterUser([Required]string name, [Required] string email, [Required] string phno, [Required] Country countryid, [Required][DataType(DataType.Password)] string password)
+        public async Task<ActionResult> RegisterUser([Required] string name, [Required] string email, [Required] string phno, [Required] Country countryid, [Required][DataType(DataType.Password)] string password)
         {
             //string hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.password);
 
@@ -75,14 +76,14 @@ namespace BookingSystem.Controllers
                 return new JsonResult(new { userName = result.userid, token = _tokenService.CreateToken(result.userid) });
             }
         }
-
+        [Authorize]
         [Route("GetProfile")]
         [HttpGet]
         public async Task<ActionResult> GetProfile()
         {
             ClaimsPrincipal currentUser = this.User;
             int userid = Convert.ToInt32(currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            if (userid>0)
+            if (userid > 0)
             {
                 return Ok(await _userService.GetProfile(userid));
             }
@@ -92,6 +93,7 @@ namespace BookingSystem.Controllers
             }
 
         }
+        [Authorize]
         [Route("ResetPassword")]
         [HttpPost]
         public async Task<string> ResetPassword(string email, [DataType(DataType.Password)] string oldpassword, [DataType(DataType.Password)] string newpassword)

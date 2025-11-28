@@ -55,7 +55,6 @@ builder.Services.AddHangfire(c => c.UseMemoryStorage());
 builder.Services.AddHangfireServer();
 
 builder.Services.AddControllers();
-builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserService, UserService>();

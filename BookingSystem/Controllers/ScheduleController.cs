@@ -19,12 +19,12 @@ namespace BookingSystem.Controllers
     public class ScheduleController : ControllerBase
     {
 
-        private readonly ILogger<PackageController> _logger;
+        private readonly ILogger<ScheduleController> _logger;
         private readonly IMapper _mapper;
         private readonly IScheduleService _scheduleService;
         private IDistributedCache _distributedCache;
         private readonly IUserService _userService;
-        public ScheduleController(ILogger<PackageController> logger, IMapper mapper, IScheduleService scheduleService, IDistributedCache distributedCache,IUserService userService)
+        public ScheduleController(ILogger<ScheduleController> logger, IMapper mapper, IScheduleService scheduleService, IDistributedCache distributedCache,IUserService userService)
 
         {
             _logger = logger;
@@ -48,12 +48,13 @@ namespace BookingSystem.Controllers
 
         [Route("Booking")]
         [HttpPost]
-        public async Task<string> Booking([FromBody] BookingDTO bookingDTO)
+        public async Task<IActionResult> Booking([FromBody] BookingDTO bookingDTO)
         {
 
             booking booking = _mapper.Map<booking>(bookingDTO);
             string result = await _scheduleService.CreateBooking(booking);
-            return result;
+            return Ok(new { message = result });
+            //return result;
             //if (result == null)
             //    return NotFound("Not Enough Credits");
             //else
