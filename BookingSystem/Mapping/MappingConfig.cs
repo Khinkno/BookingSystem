@@ -9,9 +9,9 @@ namespace BookingSystem.Mapping
         public MappingConfig()
         {
             CreateMap<UserInfo, UserInfoDTO>().ReverseMap();
-            CreateMap<Packages, packagesDTO>().ReverseMap();
-            CreateMap<UserPackage, user_packageDTO>().ReverseMap();
-            CreateMap<ClassSchedule, classDTO>().ReverseMap();
+            CreateMap<Packages, PackageDTO>().ReverseMap();
+            CreateMap<UserPackage, UserPackageDTO>().ReverseMap();
+            CreateMap<ClassSchedule, ClassDTO>().ReverseMap();
             CreateMap<booking, BookingDTO>().ReverseMap();
 
             //CreateMap<Purchase, PurchaseDTO>().ReverseMap();

@@ -3,11 +3,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BookingSystem.DTO
 {
-    public record ClassDTO
+    public record PackageDTO
     {
-        public int ClassId { get; set; }
+        public int Pid { get; set; }
 
         [Required]
+        [StringLength(255)]
         public string Name { get; set; }
 
         [Required]
@@ -18,16 +19,12 @@ namespace BookingSystem.DTO
         public int NoOfCredits { get; set; }
 
         [Required]
-        public int AvailableSlots { get; set; }
+        [Range(0, double.MaxValue)]
+        public double Price { get; set; }
 
-        [Required]
-        public int WaitlistSlots { get; set; }
+        public DateTime StartDate { get; set; }
 
-        [Required]
-        public DateTime StartDateTime { get; set; }
-
-        [Required]
-        public DateTime EndDateTime { get; set; }
+        public DateTime ExpiredDate { get; set; }
 
         [Required]
         public int Duration { get; set; }

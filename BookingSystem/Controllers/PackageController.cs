@@ -60,7 +60,7 @@ namespace BookingSystem.Controllers
 
         [Route("BuyPackages")]
         [HttpPost]
-        public async Task<ActionResult> BuyPackages([FromBody] user_packageDTO user_PackageDTO)
+        public async Task<ActionResult> BuyPackages([FromBody] UserPackageDTO user_PackageDTO)
         {
             ClaimsPrincipal currentUser = this.User;
             int userid = Convert.ToInt32(currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value);
